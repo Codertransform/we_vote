@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.activitylink.dao.ActivityLinkDao">
+
+    <sql id="activityLinkColumns">
+        a.id AS "id",
+        a.url AS "url",
+        a.activity_id AS "activityId",
+        a.office_id AS "office.id",
+        a.del_flag AS "delFlag",
+        a.remarks AS "remarks",
+        a.create_by AS "createBy.id",
+        a.create_date AS "createDate",
+        a.update_by AS "updateBy.id",
+        a.update_date AS "updateDate",
+        o4.name AS "office.name",
+        ta.title AS "activity.title"
+    </sql>
+
+    <sql id="activityLinkJoins">
+        LEFT JOIN sys_office o4 ON o4.id = a.office_id
+        left join tbl_activity ta on ta.id=a.activity_id
+    </sql>
+
+    <select id="get" resultType="ActivityLink">
+        SELECT
+        <include refid="activityLinkColumns"/>
+        FROM tbl_activity_link a
+        <include refid="activityLinkJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="ActivityLink">
+        SELECT
+        <include refid="activityLinkColumns"/>
+        FROM tbl_activity_link a
+        <include refid="activityLinkJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL} and a.office_id=#{office.id}
+            <if test="activity != null and activity.id != ''">
+                AND a.activity_id = #{activity.id}
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert">
+        INSERT INTO tbl_activity_link (
+            id,
+            url,
+            activity_id,
+            office_id,
+            del_flag,
+            remarks,
+            create_by,
+            create_date,
+            update_by,
+            update_date
+        ) VALUES (
+            #{id},
+            #{url},
+            #{activity.id},
+            #{office.id},
+            #{delFlag},
+            #{remarks},
+            #{createBy.id},
+            #{createDate},
+            #{updateBy.id},
+            #{updateDate}
+        )
+    </insert>
+
+
+    <update id="delete">
+        UPDATE tbl_activity_link
+        SET
+            del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+
+    <!-- ActivityLink getActivityLink(ActivityLink activityLink);-->
+    <select id="getActivityLink" resultType="ActivityLink">
+        SELECT
+        a.id AS "id"
+        FROM tbl_activity_link a
+        <include refid="activityLinkJoins"/>
+        WHERE a.activity_id = #{activity.id} and a.office_id=#{office.id}
+    </select>
+
+</mapper>

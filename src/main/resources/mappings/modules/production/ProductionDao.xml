@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.production.dao.ProductionDao">
+
+    <sql id="productionColumns">
+        a.id AS "id",
+        a.activity_id AS "activity.id",
+        a.office_id AS "office.id",
+        a.image AS "image",
+        a.remarks AS "remarks",
+        a.del_flag AS "delFlag",
+        a.create_by AS "createBy.id",
+        a.create_date AS "createDate",
+        a.update_by AS "updateBy.id",
+        a.update_date AS "updateDate",
+        a.user_id AS "mobileUser.id",
+        a.ticket AS "ticket",
+        o4.name AS "office.name",
+        mu.username AS "mobileUser.username"
+
+    </sql>
+
+    <sql id="productionJoins">
+        LEFT JOIN sys_office o4 ON o4.id = a.office_id
+        LEFT JOIN tbl_mobile_user mu ON mu.id = a.user_id
+    </sql>
+
+    <select id="get" resultType="Production">
+        SELECT
+        <include refid="productionColumns"/>
+        FROM tbl_production a
+        <include refid="productionJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="Production">
+        SELECT
+        <include refid="productionColumns"/>
+        FROM tbl_production a
+        <include refid="productionJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL}
+            <if test="office !=null and office.id !=''">
+                and a.office_id=#{office.id}
+            </if>
+            <if test="mobileUser !=null and mobileUser.id !=''">
+                and a.user_id=#{mobileUser.id}
+            </if>
+            <if test="activity !=null and activity.id !=''">
+                and a.activity_id=#{activity.id}
+            </if>
+        </where>
+        <choose>
+
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO tbl_production (
+            id,
+            activity_id,
+            office_id,
+            image,
+            remarks,
+            del_flag,
+            create_by,
+            create_date,
+            update_by,
+            update_date,
+            user_id,
+            ticket
+        ) VALUES (
+            #{id},
+            #{activity.id},
+            #{office.id},
+            #{image},
+            #{remarks},
+            #{delFlag},
+            #{createBy.id},
+            #{createDate},
+            #{updateBy.id},
+            #{updateDate},
+            #{mobileUser.id},
+            #{ticket}
+        )
+    </insert>
+
+
+    <update id="delete">
+        UPDATE tbl_production
+        SET
+            del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+
+    <!--List<Production> fingAllProductions(String activityId);-->
+    <select id="fingAllProductions" resultType="Production">
+        SELECT
+        <include refid="productionColumns"/>
+        FROM tbl_production a
+        <include refid="productionJoins"/>
+        where
+        a.activity_id=#{activity.id}
+        ORDER BY a.ticket DESC
+    </select>
+
+
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.git.dao.GitDao">
+
+	<sql id="gitColumns">
+		a.id AS "id",
+		a.icon AS "icon",
+		a.ticket AS "ticket",
+		a.name AS "name",
+		a.price AS "price",
+		a.del_flag AS "delFlag",
+		a.remarks AS "remarks",
+		a.create_date AS "createDate",
+		a.category_id AS "gitCategory.id",
+		b.name AS "category.name"
+	</sql>
+
+	<sql id="gitJoins">
+		left join tbl_git_category b on a.category_id=b.id
+	</sql>
+
+	<select id="get" resultType="Git">
+		SELECT
+		<include refid="gitColumns"/>
+		FROM tbl_git a
+		<include refid="gitJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="Git">
+		SELECT
+		<include refid="gitColumns"/>
+		FROM tbl_git a
+		<include refid="gitJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="gitCategory != null and gitCategory.id != ''">
+				AND a.category_id =#{gitCategory.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+
+
+	<insert id="insert">
+		INSERT INTO tbl_git (
+			id,
+			icon,
+			ticket,
+			name,
+			price,
+			del_flag,
+			remarks,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			category_id
+		) VALUES (
+			#{id},
+			#{icon},
+			#{ticket},
+			#{name},
+			#{price},
+			#{delFlag},
+			#{remarks},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{gitCategory.id}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE tbl_git
+		SET
+			icon        = #{icon},
+			ticket      = #{ticket},
+			name        = #{name},
+			price       = #{price},
+			remarks     = #{remarks},
+			update_by   = #{updateBy.id},
+			update_date = #{updateDate},
+			category_id = #{gitCategory.id}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE tbl_git
+		SET
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

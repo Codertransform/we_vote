@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.award.dao.AwardDao">
+
+    <sql id="awardColumns">
+        a.id AS "id",
+        a.name AS "name",
+        a.image AS "image",
+        a.remarks AS "remarks",
+        a.del_flag AS "delFlag",
+        a.create_date AS "createDate",
+        a.category_id AS "awardCategory.id",
+        b.name AS "awardCategory.name",
+        a.item AS "item",
+        a.item_count AS "itemCount"
+    </sql>
+
+    <sql id="awardJoins">
+        inner join tbl_award_category b on a.category_id = b.id
+    </sql>
+
+    <select id="get" resultType="Award">
+        SELECT
+        <include refid="awardColumns"/>
+        FROM tbl_award a
+        <include refid="awardJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="Award">
+        SELECT
+        <include refid="awardColumns"/>
+        FROM tbl_award a
+        <include refid="awardJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL}
+            <if test="name != null and name != ''">
+                AND a.name LIKE
+                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+            </if>
+            <if test="awardCategory != null  and awardCategory.id != ''">
+                AND a.category_id = #{awardCategory.id}
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO tbl_award (
+            id,
+            name,
+            image,
+            remarks,
+            del_flag,
+            create_by,
+            create_date,
+            update_by,
+            update_date,
+            category_id,
+            item,
+            item_count
+        ) VALUES (
+            #{id},
+            #{name},
+            #{image},
+            #{remarks},
+            #{delFlag},
+            #{createBy.id},
+            #{createDate},
+            #{updateBy.id},
+            #{updateDate},
+            #{awardCategory.id},
+            #{item},
+            #{itemCount}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tbl_award
+        SET
+            name        = #{name},
+            image       = #{image},
+            remarks     = #{remarks},
+            update_by   = #{updateBy.id},
+            update_date = #{updateDate},
+            category_id = #{awardCategory.id},
+            item        = #{item},
+            item_count  = #{itemCount}
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+        UPDATE tbl_award
+        SET
+            del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

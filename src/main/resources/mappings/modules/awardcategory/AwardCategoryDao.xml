@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.awardcategory.dao.AwardCategoryDao">
+    
+	<sql id="awardCategoryColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.office_id AS "office.id",
+		o9.name AS "office.name"
+	</sql>
+	
+	<sql id="awardCategoryJoins">
+		LEFT JOIN sys_office o9 ON o9.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="AwardCategory">
+		SELECT 
+			<include refid="awardCategoryColumns"/>
+		FROM tbl_award_category a
+		<include refid="awardCategoryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="AwardCategory">
+		SELECT 
+			<include refid="awardCategoryColumns"/>
+		FROM tbl_award_category a
+		<include refid="awardCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="AwardCategory">
+		SELECT 
+			<include refid="awardCategoryColumns"/>
+		FROM tbl_award_category a
+		<include refid="awardCategoryJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO tbl_award_category(
+			id,
+			name,
+			remarks,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			office_id
+		) VALUES (
+			#{id},
+			#{name},
+			#{remarks},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{office.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE tbl_award_category SET 	
+			name = #{name},
+			remarks = #{remarks},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE tbl_award_category SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

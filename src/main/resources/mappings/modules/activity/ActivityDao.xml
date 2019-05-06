@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.activity.dao.ActivityDao">
+
+    <sql id="activityColumns">
+        a.id AS "id",
+        a.notify AS "notify",
+        a.title AS "title",
+        a.rules AS "rules",
+        a.contents AS "contents",
+        a.start_time AS "startTime",
+        a.end_time AS "endTime",
+        a.award_category_id AS "awardCategory.id",
+        a.git_category_id AS "gitCategory.id",
+        a.advert_category_id AS "advertCategory.id",
+        a.style_id AS "style.id",
+        a.status AS "status",
+        a.remarks AS "remarks",
+        o11.name AS "office.name",
+        ac.name AS "awardCategory.name",
+        gc.name AS "gitCategory.name",
+        bc.name AS "advertCategory.name",
+        ts.name AS "style.name",
+        a.office_id AS "office.id"
+    </sql>
+
+    <sql id="activityColumnsQuartz">
+        a.id AS "id",
+        a.title AS "title",
+        a.start_time AS "startTime",
+        a.end_time AS "endTime",
+        a.status AS "status"
+    </sql>
+
+
+    <sql id="activityJoins">
+        LEFT JOIN sys_office o11 ON o11.id = a.office_id
+        left join tbl_award_category ac on ac.id=a.award_category_id
+        left join tbl_git_category gc on gc.id=a.git_category_id
+        left join tbl_advert_category bc on bc.id = a.advert_category_id
+        left join tbl_style ts on ts.id =a.style_id
+    </sql>
+
+    <select id="get" resultType="Activity">
+        SELECT
+        <include refid="activityColumns"/>
+        FROM tbl_activity a
+        <include refid="activityJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="Activity">
+        SELECT
+        <include refid="activityColumns"/>
+        FROM tbl_activity a
+        <include refid="activityJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL} and a.office_id=#{office.id}
+            <if test="title != null and title != ''">
+                AND a.title LIKE
+                <if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+            </if>
+            <if test="startTime != null ">
+                AND a.start_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null ">
+                AND a.end_time &lt;= #{endTime}
+            </if>
+
+            <if test="awardCategory != null and awardCategory.id != ''">
+                AND a.award_category_id = #{awardCategory.id}
+            </if>
+            <if test="gitCategory != null and gitCategory.id != ''">
+                AND a.git_category_id = #{gitCategory.id}
+            </if>
+            <if test="advertCategory != null and advertCategory.id != ''">
+                AND a.advert_category_id = #{advertCategory.id}
+            </if>
+            <if test="style != null and style.id != ''">
+                AND a.style_id = #{style.id}
+            </if>
+            <if test="status != null and status != ''">
+                AND a.status = #{status}
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <insert id="insert">
+        INSERT INTO tbl_activity (
+            id,
+            notify,
+            title,
+            rules,
+            contents,
+            start_time,
+            end_time,
+            award_category_id,
+            git_category_id,
+            advert_category_id,
+            style_id,
+            status,
+            office_id,
+            del_flag,
+            remarks,
+            create_by,
+            create_date,
+            update_by,
+            update_date
+        ) VALUES (
+            #{id},
+            #{notify},
+            #{title},
+            #{rules},
+            #{contents},
+            #{startTime},
+            #{endTime},
+            #{awardCategory.id},
+            #{style.id},
+            #{gitCategory.id},
+            #{advertCategory.id},
+            #{status},
+            #{office.id},
+            #{delFlag},
+            #{remarks},
+            #{createBy.id},
+            #{createDate},
+            #{updateBy.id},
+            #{updateDate}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE tbl_activity
+        SET
+            notify             = #{notify},
+            title              = #{title},
+            rules              = #{rules},
+            contents           = #{contents},
+            start_time         = #{startTime},
+            end_time           = #{endTime},
+            award_category_id  = #{awardCategory.id},
+            git_category_id    = #{gitCategory.id},
+            advert_category_id = #{advertCategory.id},
+            style_id           = #{style.id},
+            status             = #{status},
+            remarks            = #{remarks},
+            update_by          = #{updateBy.id},
+            update_date        = #{updateDate}
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+        UPDATE tbl_activity
+        SET
+            del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+
+
+    <update id="updateActivityStatus">
+        update tbl_activity a
+        set a.status = #{newStatus}
+        where a.status = #{oldStatus}
+    </update>
+
+    <!-- List<Activity> findActivityList(Activity activity);-->
+    <select id="findActivityList" resultType="Activity">
+        SELECT
+        <include refid="activityColumnsQuartz"/>
+        FROM tbl_activity a
+        where
+        a.del_flag = #{DEL_FLAG_NORMAL}
+        <if test="status != null and status != ''">
+            AND a.status = #{status}
+        </if>
+    </select>
+
+
+</mapper>
