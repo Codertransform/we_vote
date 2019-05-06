@@ -78,7 +78,7 @@
 <form:form id="inputForm" modelAttribute="activityLink" action="${ctx}/activitylink/activityLink/save" method="post"
            class="form-horizontal">
     <form:hidden path="id"/>
-    <sys:message content="${message}"/>
+    <sys:message content="${message}" type="error"/>
 
 
     <div class="control-group">

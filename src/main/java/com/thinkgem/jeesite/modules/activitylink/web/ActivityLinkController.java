@@ -1,10 +1,13 @@
 package com.thinkgem.jeesite.modules.activitylink.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.thinkgem.jeesite.common.config.Global;
+import com.thinkgem.jeesite.common.persistence.Page;
+import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.modules.activity.entity.Activity;
 import com.thinkgem.jeesite.modules.activity.service.ActivityService;
+import com.thinkgem.jeesite.modules.activitylink.entity.ActivityLink;
+import com.thinkgem.jeesite.modules.activitylink.service.ActivityLinkService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,14 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.thinkgem.jeesite.common.config.Global;
-import com.thinkgem.jeesite.common.persistence.Page;
-import com.thinkgem.jeesite.common.web.BaseController;
-import com.thinkgem.jeesite.common.utils.StringUtils;
-import com.thinkgem.jeesite.modules.activitylink.entity.ActivityLink;
-import com.thinkgem.jeesite.modules.activitylink.service.ActivityLinkService;
-
-import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -67,10 +64,9 @@ public class ActivityLinkController extends BaseController {
 
     @RequiresPermissions("activitylink:activityLink:view")
     @RequestMapping(value = "form")
-    public String form(ActivityLink activityLink, Model model, String message) {
+    public String form(ActivityLink activityLink, Model model) {
         Activity activity = new Activity();
         activity.setOffice(activityLink.getCurrentUser().getOffice());
-        model.addAttribute("errorMessage", message);
         model.addAttribute("activityList", activityService.findList(activity));
         model.addAttribute("activityLink", activityLink);
         return "modules/activitylink/activityLinkForm";
@@ -82,11 +78,11 @@ public class ActivityLinkController extends BaseController {
         activityLink.setOffice(activityLink.getCurrentUser().getOffice());
         ActivityLink isAlreadyExist = activityLinkService.getActivityLink(activityLink);
         if (isAlreadyExist != null) {
-            String message = "该活动已经生成过连接";
-            return form(activityLink, model, message);
+            addMessage(model,"该活动已经生成过连接");
+            return form(activityLink, model);
         }
         if (!beanValidator(model, activityLink)) {
-            return form(activityLink, model, null);
+            return form(activityLink, model);
         }
         activityLinkService.save(activityLink);
         addMessage(redirectAttributes, "保存活动链接成功");
@@ -111,8 +107,6 @@ public class ActivityLinkController extends BaseController {
     @RequestMapping(value = "produceUrl")
     public Map<String, Object> produceUrl(@RequestParam("selectValue") String selectValue, HttpServletRequest request) {
         return activityLinkService.produceUrl(selectValue,request);
-
     }
-
 
 }

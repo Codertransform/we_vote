@@ -1,6 +1,5 @@
 package com.thinkgem.jeesite.modules.wechat.util;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
@@ -49,7 +48,7 @@ public class CheckUtil {
 
             MessageDigest mdTemp = MessageDigest.getInstance("SHA1");
 
-            mdTemp.update(str.getBytes(StandardCharsets.UTF_8));
+            mdTemp.update(str.getBytes("utf-8"));
 
 
 
@@ -57,7 +56,7 @@ public class CheckUtil {
 
             int j = md.length;
 
-            char buf[] = new char[j*2];
+            char[] buf = new char[j * 2];
 
             int k = 0;
 
