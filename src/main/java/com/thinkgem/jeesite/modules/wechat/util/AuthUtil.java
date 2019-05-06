@@ -92,36 +92,36 @@ public class AuthUtil {
      * @throws IOException
      */
     public static WxUser getUser(String accesstoken, String openid) throws IOException {
-        WxUser user = new WxUser();
+        WxUser wuser = new WxUser();
         String url = GET_USER_URL.replace("ACCESS_TOKEN",accesstoken).replace("OPENID",openid);
         JsonObject jsonObject = doGetStr(url);
         if (jsonObject != null) {
-            user.setSubscribe(jsonObject.get("subscribe").getAsCharacter());
-            user.setOpenid(jsonObject.get("openid").getAsString());
-            user.setNickname(jsonObject.get("nickname").getAsString());
-            user.setSex(jsonObject.get("sex").getAsCharacter());
-            user.setCity(jsonObject.get("city").getAsString());
-            user.setCountry(jsonObject.get("country").getAsString());
-            user.setProvince(jsonObject.get("province").getAsString());
-            user.setLanguage(jsonObject.get("language").getAsString());
-            user.setHeadimgurl(jsonObject.get("headimgurl").getAsString());
-            user.setSubscribe_time(jsonObject.get("subscribe_time").getAsString());
+            wuser.setSubscribe(jsonObject.get("subscribe").getAsCharacter());
+            wuser.setOpenid(jsonObject.get("openid").getAsString());
+            wuser.setNickname(jsonObject.get("nickname").getAsString());
+            wuser.setSex(jsonObject.get("sex").getAsCharacter());
+            wuser.setCity(jsonObject.get("city").getAsString());
+            wuser.setCountry(jsonObject.get("country").getAsString());
+            wuser.setProvince(jsonObject.get("province").getAsString());
+            wuser.setLanguage(jsonObject.get("language").getAsString());
+            wuser.setHeadimgurl(jsonObject.get("headimgurl").getAsString());
+            wuser.setSubscribe_time(jsonObject.get("subscribe_time").getAsString());
             if (jsonObject.get("unionid") != null){
-                user.setUnionid(jsonObject.get("unionid").getAsString());
+                wuser.setUnionid(jsonObject.get("unionid").getAsString());
             }
-            user.setRemark(jsonObject.get("remark").getAsString());
-            user.setGroupid(jsonObject.get("groupid").getAsString());
+            wuser.setRemark(jsonObject.get("remark").getAsString());
+            wuser.setGroupid(jsonObject.get("groupid").getAsString());
             JsonArray elements = jsonObject.getAsJsonArray("tagid_list");
-            List<Tag> tags = new ArrayList<>();
+            List<Tag> tags = new ArrayList<Tag>();
             for (JsonElement ele : elements) {
                 Tag tag = new Tag();
                 tag.setId(ele.getAsString());
                 tags.add(tag);
             }
-            user.setTagid_list(tags);
-            user.setSubscribe_scene(jsonObject.get("subscribe_scene").getAsString());
+            wuser.setTagid_list(tags);
+            wuser.setSubscribe_scene(jsonObject.get("subscribe_scene").getAsString());
         }
-        return user;
+        return wuser;
     }
 
 }
