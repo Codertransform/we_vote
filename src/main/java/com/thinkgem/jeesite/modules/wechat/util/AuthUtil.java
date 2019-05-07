@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class AuthUtil {
     //从微信后台拿到APPID和APPSECRET 并封装为常量
-    public static final String APPID = "wx0cb537c7232a300f ";
-    public static final String APPSECRET = "f18f964c9af1db3ce533c0eedf401968 ";
+    public static final String APPID = "wx85df8feee563342f";
+    public static final String APPSECRET = "2300522e79854739e3342f6aeff22ba9";
     private static final String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
     private static final String GET_USER_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 
