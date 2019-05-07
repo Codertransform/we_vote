@@ -93,6 +93,7 @@
         FROM tbl_activity_link a
         <include refid="activityLinkJoins"/>
         WHERE a.activity_id = #{activity.id} and a.office_id=#{office.id}
+        and a.del_flag = #{DEL_FLAG_NORMAL}
     </select>
 
 </mapper>
