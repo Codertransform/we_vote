@@ -1,4 +1,4 @@
-package com.thinkgem.jeesite.modules.wechat.entity;
+package com.thinkgem.jeesite.modules.wechat.entity.Msg;
 
 public class VoiceEntity extends BaseEntity {
     private String MediaId;

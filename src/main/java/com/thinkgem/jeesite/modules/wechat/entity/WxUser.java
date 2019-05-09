@@ -1,5 +1,7 @@
 package com.thinkgem.jeesite.modules.wechat.entity;
 
+import com.thinkgem.jeesite.modules.wechat.entity.Msg.Tag;
+
 import java.util.List;
 
 public class WxUser {

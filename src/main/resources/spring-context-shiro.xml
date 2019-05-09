@@ -17,7 +17,9 @@
 				/static/** = anon
 				/userfiles/** = anon
 				${adminPath}/auth = anon
+				${adminPath}/sign = anon
 				${adminPath}/auth/** = anon
+				${adminPath}/sign/** = anon
 				${adminPath}/cas = cas
 				${adminPath}/login = authc
 				${adminPath}/logout = logout
