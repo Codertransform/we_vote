@@ -3,10 +3,10 @@
 <html>
 <head>
     <title>Title</title>
-    <jsp:include page="style.jsp"></jsp:include>
+    <jsp:include page="style.jsp"/>
 </head>
 <body>
-<jsp:include page="head.jsp"></jsp:include>
+<jsp:include page="head.jsp"/>
 
 <div class="container">
     <div class="row clearfix"></div>
