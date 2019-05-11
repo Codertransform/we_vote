@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "${adminPath}/sign")
@@ -36,7 +37,10 @@ public class SignUpController extends BaseController {
     }
 
     @RequestMapping(value = "/signup",method = RequestMethod.POST)
-    public String signSave(){
+    public String signSave(SignUp signUp, Model model, RedirectAttributes redirectAttributes){
+        if (!beanValidator(model,signUp)){
+            return signup(signUp,model);
+        }
         return null;
     }
 }

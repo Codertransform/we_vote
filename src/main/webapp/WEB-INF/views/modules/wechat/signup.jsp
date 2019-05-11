@@ -12,6 +12,8 @@
     <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
+    <script src="${ctxStatic}/jquery/jquery-1.9.1.js"></script>
+
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="${ctxStatic}/wexin/css/base.css"/>
@@ -37,7 +39,6 @@
             <div class="time">距离活动结束还剩：<span id="countdown"></span></div>
             <div class="form">
                 <form:form cssClass="form-horizontal" modelAttribute="signUp" action="${ctx}/sign/signup" method="post" enctype="multipart/form-data">
-                    <sys:message content="${message}"/>
                     <div class="form-group">
                         <label for="name" class="col-xs-3 control-label">姓名:</label>
                         <div class="col-xs-8 msg">
@@ -63,12 +64,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="file" class="col-xs-3 control-label">上传参赛作品:</label>
+                        <label class="col-xs-3 control-label">上传参赛作品:</label>
                         <div class="col-xs-8 msg">
-                            <input type="file"/>
+                            <div class="add"></div>
                         </div>
                     </div>
-
                 </form:form>
             </div>
         </div>

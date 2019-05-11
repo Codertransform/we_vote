@@ -25,7 +25,7 @@ ul,li{
 
 .panel .panel-body{
     background: url("../../image/sign_bg.png") repeat-x bottom;
-    background-size: auto;
+    background-size: 20px;
 }
 
 .panel .panel-body .time{
@@ -49,4 +49,34 @@ ul,li{
 
 .form .form-group .msg{
     padding: 0;
+}
+
+.form .form-group .msg .add {
+    border: 1px solid;
+    width: 50px;
+    height: 50px;
+    color: #FFE6A2;
+    transition: color .25s;
+    position: relative;
+}
+
+.form .form-group .msg .add::before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40px;
+    margin-left: -20px;
+    margin-top: -3px;
+    border-top: 5px solid;
+}
+.form .form-group .msg .add::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 40px;
+    margin-left: -3px;
+    margin-top: -20px;
+    border-left: 5px solid;
 }
